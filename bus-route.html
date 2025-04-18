@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartRide - Bus Routes</title>
+    <!-- Google Fonts for stylish fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Roboto:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <!-- Leaflet.js for interactive map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #ffffff;
+            margin: 0;
+            padding: 0;
+            background-image: url('https://www.publicdomainpictures.net/pictures/30000/velka/bus-and-road-1418752766wLr.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        nav {
+            background-color: #c62828;
+            /* Dark Red */
+            padding: 20px 0;
+            text-align: center;
+        }
+
+        nav a {
+            color: white;
+            font-size: 1.2em;
+            margin: 0 25px;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        header {
+            background-color: rgba(211, 47, 47, 0.9);
+            /* Dark Red with transparency */
+            color: #fff;
+            text-align: center;
+            padding: 50px 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            font-size: 4.5em;
+            font-weight: 700;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+        }
+
+        header p {
+            font-size: 1.3em;
+            font-weight: 500;
+            color: #fff;
+            margin-top: 10px;
+        }
+
+        nav {
+            background-color: #c62828;
+            /* Dark Red */
+            padding: 20px 0;
+            text-align: center;
+        }
+
+        nav a {
+            color: white;
+            font-size: 1.2em;
+            margin: 0 25px;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .search-bar {
+            margin: 20px auto;
+            max-width: 600px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .search-bar input {
+            width: 80%;
+            padding: 10px;
+            font-size: 1.2em;
+            border: 2px solid #d32f2f;
+            border-radius: 5px 0 0 5px;
+            outline: none;
+        }
+
+        .search-bar button {
+            padding: 10px 20px;
+            font-size: 1.2em;
+            background-color: #d32f2f;
+            color: white;
+            border: none;
+            border-radius: 0 5px 5px 0;
+            cursor: pointer;
+        }
+
+        .search-bar button:hover {
+            background-color: #b71c1c;
+        }
+
+        .map-container {
+            width: 100%;
+            height: 500px;
+            margin-top: 40px;
+        }
+
+        .footer {
+            background-color: #d32f2f;
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 60px;
+        }
+
+        .footer a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.1em;
+            font-weight: 500;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <a href="/project.html">
+            <h1>SmartRide</h1>
+        </a>
+        <p>Your Advanced Bus Transportation System</p>
+    </header>
+
+    <!-- Updated Navigation Bar -->
+    <nav>
+        <a href="project.html">Home</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="bookticket.html">Book a Ride</a>
+        <a href="bus-route.html">Bus Routes</a>
+        <a href="livebustracking.html">Live Bus Tracking</a>
+        <a href="real-time-bus-updates.html">Notifications</a>
+        <a href="loginpage.html"><i class="fa-regular fa-circle-user"></i></a>
+    </nav>
+
+    <div class="container">
+        <h2 style="text-align: center; color: #d32f2f; font-size: 2.5em;">Bus Route Map</h2>
+
+        <!-- Search Bar -->
+        <div class="search-bar">
+            <input type="text" id="routeSearch" placeholder="Search for a route (e.g., Surat to Vadodara)">
+            <button onclick="searchRoute()">Search</button>
+        </div>
+
+        <div class="map-container" id="map"></div>
+    </div>
+
+    <footer class="footer">
+        <p>© 2025 SmartRide | <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
+    </footer>
+
+    <!-- Leaflet.js and JavaScript -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        // Create map centered on Surat
+        var map = L.map('map').setView([21.1702, 72.8311], 8);
+
+        // Add OpenStreetMap tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Define coordinates for Surat to Vadodara and Bhavnagar routes
+        var routes = {
+            "surat-vadodara": [
+                { name: "Surat", lat: 21.1702, lng: 72.8311 },
+                { name: "Bharuch", lat: 21.7051, lng: 72.9959 },
+                { name: "Vadodara", lat: 22.3072, lng: 73.1812 }
+            ],
+            "surat-bhavnagar": [
+                { name: "Surat", lat: 21.1702, lng: 72.8311 },
+                { name: "Bharuch", lat: 21.7051, lng: 72.9959 },
+                { name: "Vadodara", lat: 22.3072, lng: 73.1812 },
+                { name: "Borsad", lat: 22.4079, lng: 72.8983 },
+                { name: "Tarapur", lat: 22.5423, lng: 72.7168 },
+                { name: "Dholera", lat: 22.2487, lng: 72.1959 },
+                { name: "Bhavnagar", lat: 21.7645, lng: 72.1519 }
+            ]
+        };
+
+        // Function to display a route on the map
+        function displayRoute(routeKey) {
+            map.eachLayer(function (layer) {
+                if (layer instanceof L.Marker || layer instanceof L.Polyline) {
+                    map.removeLayer(layer);
+                }
+            });
+
+            var selectedRoute = routes[routeKey];
+            if (!selectedRoute) return;
+
+            // Add markers for bus stops
+            selectedRoute.forEach(function (stop) {
+                L.marker([stop.lat, stop.lng]).addTo(map)
+                    .bindPopup("<b>" + stop.name + "</b>");
+            });
+
+            // Add a polyline for the route
+            var routeCoordinates = selectedRoute.map(function (stop) {
+                return [stop.lat, stop.lng];
+            });
+            L.polyline(routeCoordinates, { color: 'red', weight: 5 }).addTo(map);
+
+            // Center the map on the first stop
+            map.setView([selectedRoute[0].lat, selectedRoute[0].lng], 8);
+        }
+
+        // Search functionality
+        function searchRoute() {
+            var query = document.getElementById('routeSearch').value.toLowerCase();
+            if (query.includes("surat") && query.includes("vadodara")) {
+                displayRoute("surat-vadodara");
+            } else if (query.includes("surat") && query.includes("bhavnagar")) {
+                displayRoute("surat-bhavnagar");
+            } else {
+                alert("Route not found. Please try again.");
+            }
+        }
+
+        // Display the default route (Surat to Vadodara) on page load
+        displayRoute("surat-vadodara");
+    </script>
+
+</body>
+
+</html>

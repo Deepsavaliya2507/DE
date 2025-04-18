@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Ride - Advanced Transportation System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Roboto:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.6.0/firebase-database.js"></script>
+
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        nav {
+            background-color: #c62828;
+            /* Dark Red */
+            padding: 20px 0;
+            text-align: center;
+        }
+
+        nav a {
+            color: white;
+            font-size: 1.2em;
+            margin: 0 25px;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        header {
+            background-color: rgba(211, 47, 47, 0.9);
+            /* Dark Red with transparency */
+            color: #fff;
+            text-align: center;
+            padding: 50px 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            font-size: 4.5em;
+            font-weight: 700;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+        }
+
+        header p {
+            font-size: 1.3em;
+            font-weight: 500;
+            color: #fff;
+            margin-top: 10px;
+        }
+
+        .search-bar {
+            margin: 20px auto;
+            text-align: center;
+        }
+
+        .search-bar input {
+            padding: 10px;
+            font-size: 1.1em;
+            width: 30%;
+            border: 2px solid #d32f2f;
+            border-radius: 5px;
+        }
+
+        .search-bar button {
+            padding: 10px 15px;
+            font-size: 1.1em;
+            border: none;
+            background-color: #d32f2f;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-left: 10px;
+        }
+
+        .search-bar button:hover {
+            background-color: #b71c1c;
+        }
+
+        .table-container {
+            width: 80%;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: center;
+        }
+
+        table th,
+        table td {
+            padding: 15px;
+            border: 1px solid #ddd;
+        }
+
+        table th {
+            background-color: #d32f2f;
+            color: white;
+            font-size: 1.1em;
+        }
+
+        table td {
+            font-size: 1.1em;
+            color: #333;
+        }
+
+        .book-now-btn {
+            background-color: #d32f2f;
+            color: white;
+            padding: 10px 15px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+
+        .book-now-btn:hover {
+            background-color: #b71c1c;
+        }
+
+        .intro {
+            text-align: center;
+            margin: 40px 0;
+        }
+
+        .intro h2 {
+            color: #d32f2f;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        .intro p {
+            font-size: 1.1em;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .available-buses {
+            display: flex;
+            justify-content: space-evenly;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .bus {
+            background-color: #f1f1f1;
+            border-radius: 15px;
+            padding: 30px;
+            width: 270px;
+            text-align: center;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease-in-out;
+            margin-top: 20px;
+        }
+
+        .bus:hover {
+            transform: scale(1.05);
+        }
+
+        .bus i {
+            font-size: 3.5em;
+            color: #d32f2f;
+            margin-bottom: 20px;
+        }
+
+        .bus h3 {
+            color: #d32f2f;
+            font-size: 1.7em;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .booking-section {
+            margin: 40px auto;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            width: 80%;
+        }
+
+        .booking-section h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #d32f2f;
+        }
+
+        .ticket-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .ticket-form label {
+            font-size: 1.1em;
+            color: #555;
+        }
+
+        .ticket-form input,
+        .ticket-form select,
+        .ticket-form button {
+            padding: 10px;
+            font-size: 1em;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .ticket-form button {
+            background-color: #d32f2f;
+            color: white;
+            cursor: pointer;
+        }
+
+        .ticket-form button:hover {
+            background-color: #b71c1c;
+        }
+
+        footer {
+            background-color: #d32f2f;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 50px;
+        }
+
+        #ticketPopup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #fff;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            z-index: 1000;
+            text-align: center;
+            width: 80%;
+            max-width: 500px;
+            border: 3px solid #d32f2f;
+        }
+
+        #popupOverlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <a href="/project.html">
+            <h1>SmartRide</h1>
+        </a>
+        <p>Your Advanced Bus Transportation System</p>
+    </header>
+
+    <!-- Updated Navigation Bar -->
+    <nav>
+        <a href="project.html">Home</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="bookticket.html">Book a Ride</a>
+        <a href="bus-route.html">Bus Routes</a>
+        <a href="livebustracking.html">Live Bus Tracking</a>
+        <a href="real-time-bus-updates.html">Notifications</a>
+        <a href="loginpage.html"><i class="fa-regular fa-circle-user"></i></a>
+    </nav>
+
+    <div class="search-bar">
+        <input type="text" id="source" placeholder="Enter Source" />
+        <input type="text" id="destination" placeholder="Enter Destination" />
+        <button onclick="searchBuses()">Search</button>
+    </div>
+
+    <div class="table-container">
+        <h2>Available Buses</h2>
+        <table id="busTable">
+            <thead>
+                <tr>
+                    <th>Bus Name</th>
+                    <th>Departure Time</th>
+                    <th>Arrival Time</th>
+                    <th>Ticket Price</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Table rows will be inserted here dynamically -->
+            </tbody>
+        </table>
+    </div>
+
+    <div class="intro">
+        <h2>Featured Buses</h2>
+        <p>Select your desired bus and book your ticket. Below are some highlighted rides for today.</p>
+    </div>
+
+    <div class="available-buses">
+        <div class="bus">
+            <i class="fas fa-bus"></i>
+            <h3>Bus 101</h3>
+            <p>Departure: 10:00 AM - Arrival: 12:00 PM</p>
+            <p>Route: City A → City B</p>
+            <p>Price: $20</p>
+        </div>
+        <div class="bus">
+            <i class="fas fa-bus"></i>
+            <h3>Bus 102</h3>
+            <p>Departure: 12:30 PM - Arrival: 2:30 PM</p>
+            <p>Route: City B → City A</p>
+            <p>Price: $25</p>
+        </div>
+        <div class="bus">
+            <i class="fas fa-bus"></i>
+            <h3>Bus 103</h3>
+            <p>Departure: 3:00 PM - Arrival: 5:00 PM</p>
+            <p>Route: City A → City C</p>
+            <p>Price: $22</p>
+        </div>
+        <div class="bus">
+            <i class="fas fa-bus"></i>
+            <h3>Bus 104</h3>
+            <p>Departure: 4:00 PM - Arrival: 6:30 PM</p>
+            <p>Route: City C → City A</p>
+            <p>Price: $18</p>
+        </div>
+    </div>
+
+    <div class="booking-section">
+        <h2><i class="fas fa-ticket-alt"></i> Book Your Ticket</h2>
+        <form class="ticket-form" id="ticketForm">
+            <label for="busSelect">Select Bus:</label>
+            <select id="busSelect">
+                <option value="">--Select Bus--</option>
+                <option value="101">Bus 101</option>
+                <option value="102">Bus 102</option>
+                <option value="103">Bus 103</option>
+            </select>
+
+            <label for="travelDate">Select Date:</label>
+            <input type="date" id="travelDate">
+
+            <label for="ticketCount">Number of Tickets:</label>
+            <input type="number" id="ticketCount" min="1" max="10">
+
+            <button type="submit">Book Now</button>
+        </form>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Smart Ride | <a href="#" style="color: white; text-decoration: none;">Privacy Policy</a> | <a
+                href="#" style="color: white; text-decoration: none;">Terms of Service</a></p>
+    </footer>
+
+    <div id="ticketPopup">
+        <h2 style="color: #d32f2f; margin-bottom: 20px;">Ticket Confirmed</h2>
+        <div id="popupContent" style="color: #333; font-size: 1.1em; line-height: 1.6;"></div>
+        <button onclick="trackBus()"
+            style="background-color: #d32f2f; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin-top: 20px;">Track
+            Bus</button>
+        <button onclick="closePopup()"
+            style="background-color: #fff; color: #d32f2f; padding: 10px 20px; border: 2px solid #d32f2f; border-radius: 5px; cursor: pointer; margin-top: 10px;">Close</button>
+    </div>
+
+    <div id="popupOverlay" onclick="closePopup()"></div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+        import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDahg06SEzRJJH6lM5Yb1EYgfZwK-0hHRQ",
+            authDomain: "de-web-bdfd0.firebaseapp.com",
+            databaseURL: "https://de-web-bdfd0-default-rtdb.firebaseio.com",
+            projectId: "de-web-bdfd0",
+            storageBucket: "de-web-bdfd0.appspot.com",
+            messagingSenderId: "11558859515",
+            appId: "1:11558859515:web:060a07bf4dd1ce7490765e",
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('ticketForm').addEventListener('submit', function (event) {
+                event.preventDefault();
+
+                const busSelect = document.getElementById('busSelect').value;
+                const travelDate = document.getElementById('travelDate').value;
+                const ticketCount = document.getElementById('ticketCount').value;
+
+                const ticketData = {
+                    bus: busSelect,
+                    date: travelDate,
+                    count: ticketCount
+                };
+
+                const ticketsRef = ref(database, 'tickets');
+                push(ticketsRef, ticketData)
+                    .then(() => {
+                        displayPopup(ticketData);
+                        document.getElementById('ticketForm').reset();
+                    })
+                    .catch((error) => {
+                        console.error('Error booking ticket:', error);
+                        alert('Error booking ticket. Please try again.');
+                    });
+            });
+        });
+
+        function displayPopup(ticketData) {
+            const popupContent = document.getElementById('popupContent');
+            popupContent.innerHTML = `
+                <p><strong>Ticket Confirmed!</strong></p>
+                <p><strong>Bus:</strong> ${ticketData.bus}</p>
+                <p><strong>Date:</strong> ${ticketData.date}</p>
+                <p><strong>Number of Tickets:</strong> ${ticketData.count}</p>
+            `;
+            document.getElementById('ticketPopup').style.display = 'block';
+            document.getElementById('popupOverlay').style.display = 'block';
+        }
+
+        // Define functions in the global scope
+        window.trackBus = function () {
+            window.location.href = "livebustracking.html";
+        }
+
+        window.closePopup = function () {
+            document.getElementById('ticketPopup').style.display = 'none';
+            document.getElementById('popupOverlay').style.display = 'none';
+        }
+    </script>
+
+</body>
+
+</html>

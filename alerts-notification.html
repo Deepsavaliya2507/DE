@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartRide - Real-Time Bus Notifications</title>
+    <!-- Google Fonts for stylish fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Roboto:wght@400;500&display=swap"
+        rel="stylesheet">
+    <!-- Leaflet.js for interactive map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <!-- Font Awesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #ffffff;
+            margin: 0;
+            padding: 0;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        nav {
+            background-color: #c62828;
+            /* Dark Red */
+            padding: 20px 0;
+            text-align: center;
+        }
+
+        nav a {
+            color: white;
+            font-size: 1.2em;
+            margin: 0 25px;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        header {
+            background-color: rgba(211, 47, 47, 0.9);
+            /* Light Red */
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            font-size: 3em;
+            font-weight: 700;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+        }
+
+        header .logo {
+            max-width: 100px;
+            margin-top: 10px;
+        }
+
+        /* Notification Banner */
+        .notification-banner {
+            background-color: #c62828;
+            /* Dark Red */
+            color: white;
+            padding: 15px;
+            font-size: 1.1em;
+            text-align: center;
+            position: relative;
+        }
+
+        .notification-banner i {
+            margin-right: 10px;
+        }
+
+        .notification-banner button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5em;
+            cursor: pointer;
+        }
+
+        .map-container {
+            width: 100%;
+            height: 500px;
+            margin-top: 40px;
+        }
+
+        .schedule-container {
+            padding: 30px 20px;
+            background-color: #f1f1f1;
+        }
+
+        .schedule-container h2 {
+            color: #d32f2f;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        .alert-feed {
+            list-style: none;
+            padding: 0;
+            margin: 20px 0;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .alert-feed li {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .alert-feed li i {
+            color: #d32f2f;
+            margin-right: 15px;
+            font-size: 1.5em;
+        }
+
+        .alert-feed li .alert-text {
+            font-size: 1.1em;
+            color: #555;
+        }
+
+        .alert-feed li .timestamp {
+            margin-left: auto;
+            color: #777;
+            font-size: 0.9em;
+        }
+
+        .signup-container {
+            background-color: #f1f1f1;
+            padding: 30px;
+            margin-top: 40px;
+            text-align: center;
+        }
+
+        .signup-container h3 {
+            font-size: 2em;
+            margin-bottom: 20px;
+            color: #d32f2f;
+        }
+
+        .signup-container input[type="email"] {
+            padding: 12px;
+            font-size: 1em;
+            width: 60%;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .signup-container button {
+            background-color: #d32f2f;
+            color: white;
+            font-size: 1.1em;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        .signup-container button:hover {
+            background-color: #b71c1c;
+        }
+
+        footer {
+            background-color: #d32f2f;
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 60px;
+        }
+
+        footer a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.1em;
+            font-weight: 500;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <img class="logo" src="https://via.placeholder.com/100" alt="SmartRide Logo">
+        <h1>Real-Time Bus Notifications</h1>
+    </header>
+
+    <!-- Updated Navigation Bar -->
+    <nav>
+        <a href="project.html">Home</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="bookticket.html">Book a Ride</a>
+        <a href="bus-route.html">Bus Routes</a>
+        <a href="livebustracking.html">Live Bus Tracking</a>
+        <a href="real-time-bus-updates.html">Notifications</a>
+        <a href="loginpage.html"><i class="fa-regular fa-circle-user"></i></a>
+    </nav>
+
+    <!-- Notification Banner -->
+    <div class="notification-banner">
+        <i class="fas fa-bus"></i>
+        <span>Bus 101 delayed by 15 minutes due to traffic.</span>
+        <button onclick="this.parentElement.style.display='none';">&times;</button>
+    </div>
+
+    <!-- Map for Real-Time Bus Location -->
+    <div class="map-container" id="map"></div>
+
+    <!-- Schedule & Alerts -->
+    <div class="schedule-container">
+        <h2>Live Bus Schedule & Alerts</h2>
+        <ul class="alert-feed">
+            <li>
+                <i class="fas fa-clock"></i>
+                <div class="alert-text">Bus 102 is running on time.</div>
+                <div class="timestamp">10:15 AM</div>
+            </li>
+            <li>
+                <i class="fas fa-bus"></i>
+                <div class="alert-text">Bus 105 will follow an alternate route.</div>
+                <div class="timestamp">10:05 AM</div>
+            </li>
+            <li>
+                <i class="fas fa-map-marker-alt"></i>
+                <div class="alert-text">Bus 103 delayed by 10 minutes due to road closure.</div>
+                <div class="timestamp">09:50 AM</div>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Sign-Up for Notifications -->
+    <div class="signup-container">
+        <h3>Get Notifications for Your Route</h3>
+        <input type="email" placeholder="Enter your email" required>
+        <button type="submit">Sign Up</button>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2025 SmartRide | <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
+    </footer>
+
+    <!-- Leaflet.js for Map -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        // Create map centered on an initial location
+        var map = L.map('map').setView([12.9716, 77.5946], 12);  // Example: Bangalore, India
+
+        // Add OpenStreetMap tiles (using Leaflet's default tile layer)
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Bus locations (example coordinates)
+        var busLocations = [
+            { lat: 12.9716, lng: 77.5946, busId: '101', status: 'Delayed by 15 minutes' },
+            { lat: 12.9806, lng: 77.6046, busId: '102', status: 'On time' },
+            { lat: 12.9906, lng: 77.6146, busId: '103', status: 'Delayed due to road closure' }
+        ];
+
+        // Add bus markers
+        busLocations.forEach(function (bus) {
+            var busIcon = L.icon({
+                iconUrl: 'https://img.icons8.com/ios/452/bus.png',  // Bus icon
+                iconSize: [32, 32]
+            });
+
+            L.marker([bus.lat, bus.lng], { icon: busIcon })
+                .addTo(map)
+                .bindPopup("<b>Bus " + bus.busId + "</b><br>Status: " + bus.status);
+        });
+    </script>
+
+</body>
+
+</html>

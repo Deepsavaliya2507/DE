@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - SmartRide</title>
+    <!-- Stylish Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Poppins:wght@500&display=swap"
+        rel="stylesheet">
+    <!-- Font Awesome Icons for Bus Icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script type="module" src="firebase-config.js" defer></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: url('https://www.shutterstock.com/search/bus+icon-pattern') center/cover no-repeat, rgba(0, 0, 0, 0.1);
+            background-size: contain;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            max-width: 400px;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.9);
+            /* Slight transparency */
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            z-index: 1;
+        }
+
+        .login-box {
+            width: 100%;
+            text-align: center;
+        }
+
+        .login-box h2 {
+            color: #d32f2f;
+            margin-bottom: 20px;
+            font-size: 2em;
+            font-weight: 600;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px 40px 12px 40px;
+            /* Ensure padding on both sides */
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 1.1em;
+            box-sizing: border-box;
+            transition: 0.3s;
+        }
+
+        .input-group input:focus {
+            border-color: #d32f2f;
+            outline: none;
+            background-color: #fff;
+        }
+
+        .input-group input::placeholder {
+            color: #aaa;
+        }
+
+        .input-group .icon {
+            position: absolute;
+            left: 10px;
+            /* Adjusted for proper alignment */
+            color: #d32f2f;
+            font-size: 1.3em;
+        }
+
+        .error {
+            color: red;
+            font-size: 0.9em;
+            margin-top: 5px;
+            display: none;
+            margin-left: 0;
+            /* Reset left margin to align properly */
+        }
+
+        .login-btn {
+            background-color: #d32f2f;
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.2em;
+            width: 100%;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .login-btn:hover {
+            background-color: #b71c1c;
+        }
+
+        .register-link {
+            margin-top: 15px;
+            font-size: 1em;
+            color: #d32f2f;
+        }
+
+        .register-link a {
+            text-decoration: none;
+            color: #d32f2f;
+        }
+
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive Design */
+        @media screen and (max-width: 768px) {
+            .login-container {
+                padding: 20px;
+            }
+
+            .login-box h2 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- onsubmit="return validateForm()" -->
+    <div class="login-container">
+        <div class="login-box">
+            <h2><i class="fas fa-bus"></i> SmartRide Login</h2>
+            <form id="loginForm" onsubmit="return validateForm()">
+                <div class="input-group">
+                    <i class="fas fa-envelope icon"></i>
+                    <input type="email" id="email" placeholder="Enter your email" required>
+                    <div class="error" id="emailError">Please enter a valid email address.</div>
+                </div>
+
+                <div class="input-group">
+                    <i class="fas fa-lock icon"></i>
+                    <input type="password" id="password" placeholder="Enter your password" required>
+                </div>
+
+                <div class="error" id="passwordError">
+                    Password must contain at least one uppercase letter, one lowercase letter, one digit, one special
+                    character, and be at least 8 characters long.
+                </div>
+
+                <button type="submit" id="submit" class="login-btn">Login</button>
+            </form>
+            <div class="register-link">
+                <p>Don't have an account? <a href="newregister.html">Register here</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function validateForm() {
+            // Clear previous errors
+            document.getElementById("emailError").style.display = "none";
+            document.getElementById("passwordError").style.display = "none";
+
+            // Validate email
+            const email = document.getElementById("email").value;
+            const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+            if (!email.match(emailPattern)) {
+                1
+                document.getElementById("emailError").style.display = "block";
+                return false;
+            }
+
+            // Validate password
+            const password = document.getElementById("password").value;
+            const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+            if (!password.match(passwordPattern)) {
+                document.getElementById("passwordError").style.display = "block";
+                return false;
+            }
+
+            // Successful validation - redirect to the dashboard (BUS-Dashboard.html)
+            window.location.href = "project.html";  // Redirects to your BUS-Dashboard.html
+            return false; // Prevent form submission to keep validation working
+        }
+    </script>
+
+</body>
+
+</html>
